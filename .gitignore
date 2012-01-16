@@ -4,3 +4,4 @@ out
 *.ipr
 .DS_Store
 Thumbs.db
+target

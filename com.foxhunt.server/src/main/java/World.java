@@ -1,6 +1,6 @@
-import com.mysql.jdbc.MySQLConnection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.sql.DriverManager;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -15,6 +15,8 @@ public class World
 {
 	private Queue<Fix> fixQueue;
 	private boolean stop = true;
+	final static Logger log = LoggerFactory.getLogger(FoxhuntServer.class);
+
 
 	public void EnqueueFix(Fix fix)
 	{
@@ -23,26 +25,19 @@ public class World
 
 	public void FixProcessingLoop()
 	{
-		FoxhuntServer.log.info("Entered world loop");
+		log.info("Entered world loop");
 		stop=false;
-		while (!stop)
+		while (true)
 		{
-			while (fixQueue.isEmpty() && !stop)
+			if(!fixQueue.isEmpty())
 			{
-				try
-				{
-					Thread.sleep(10);
-				} catch (InterruptedException e)
-				{
-					FoxhuntServer.log.error(e.getMessage());
-					return;
-				}
-			};
+				ProcessFix(fixQueue.poll());
+			}
+
 			if(stop)
 			{
 				return;
 			}
-			ProcessFix(fixQueue.poll());
 		}
 	}
 	
@@ -66,7 +61,7 @@ public class World
 			@Override public void run()
 			{
 				FixProcessingLoop();
-				FoxhuntServer.log.info("Left world loop");
+				log.info("Left world loop");
 			}
 		};
 	}

@@ -3,7 +3,6 @@ import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,7 +10,6 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
-import java.util.Date;
 import java.util.concurrent.Executors;
 
 /**
@@ -31,7 +29,7 @@ public class FoxhuntServer
 			throws InterruptedException
 	{
 		log.info("Server launched");
-		World world = new World();
+		final World world = new World();
 		Thread worldThread = new Thread(world.getFixLoop());
 		worldThread.setName("World");
 		worldThread.start();
@@ -47,7 +45,7 @@ public class FoxhuntServer
 		{
 			@Override public ChannelPipeline getPipeline() throws Exception
 			{
-				return Channels.pipeline(new FoxhuntTCPHandler());
+				return Channels.pipeline(new FoxhuntTopHandler(world));
 			}
 		});
 

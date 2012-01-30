@@ -27,11 +27,9 @@ public class FoxhuntTopHandler extends SimpleChannelHandler
 
 	@Override public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception
 	{
-        Fix fix = new Fix();
-        fix.setLatitude(10);
-        fix.setLongitude(20);
-        fix.setUserId(this.hashCode());
-        world.EnqueueFix(fix);
+	   FoxhuntPacket packet = (FoxhuntPacket) e.getMessage();
+		
+       log.info(packet.toString());
 	}
     
     public FoxhuntTopHandler(World w)

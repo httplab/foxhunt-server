@@ -47,7 +47,7 @@ public class FoxhuntServer
 		{
 			@Override public ChannelPipeline getPipeline() throws Exception
 			{
-				return Channels.pipeline(new FoxhuntTopHandler(world));
+				return Channels.pipeline(new FoxhuntFrameDecoder(),new FoxhuntTopHandler(world));
 			}
 		});
 

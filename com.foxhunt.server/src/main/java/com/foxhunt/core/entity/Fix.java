@@ -9,27 +9,16 @@ package com.foxhunt.core.entity;
  */
 public class Fix
 {
-	private double latitude;
 	private double longitude;
+	private double latitude;
 	private double accuracy;
-	private double altitude;
-	private double bearing;
-	private double speed;
 	private long clientTime;
-	private long fixTime;
-	private byte provider;
+	private byte providerId;
 
-	public int getUserId()
-	{
-		return userId;
-	}
-
-	public void setUserId(int userId)
-	{
-		this.userId = userId;
-	}
-
-	private int userId;
+	private Double altitude;
+	private Double bearing;
+	private Double speed;
+	private Long fixTime;
 
 	public double getAccuracy()
 	{
@@ -41,22 +30,22 @@ public class Fix
 		this.accuracy = accuracy;
 	}
 
-	public double getAltitude()
+	public Double getAltitude()
 	{
 		return altitude;
 	}
 
-	public void setAltitude(double altitude)
+	public void setAltitude(Double altitude)
 	{
 		this.altitude = altitude;
 	}
 
-	public double getBearing()
+	public Double getBearing()
 	{
 		return bearing;
 	}
 
-	public void setBearing(double bearing)
+	public void setBearing(Double bearing)
 	{
 		this.bearing = bearing;
 	}
@@ -71,12 +60,12 @@ public class Fix
 		this.clientTime = clientTime;
 	}
 
-	public long getFixTime()
+	public Long getFixTime()
 	{
 		return fixTime;
 	}
 
-	public void setFixTime(long fixTime)
+	public void setFixTime(Long fixTime)
 	{
 		this.fixTime = fixTime;
 	}
@@ -101,28 +90,28 @@ public class Fix
 		this.longitude = longitude;
 	}
 
-	public byte getProvider()
+	public byte getProviderId()
 	{
-		return provider;
+		return providerId;
 	}
 
-	public void setProvider(byte provider)
+	public void setProviderId(byte providerId)
 	{
-		this.provider = provider;
+		this.providerId = providerId;
 	}
 
-	public double getSpeed()
+	public Double getSpeed()
 	{
 		return speed;
 	}
 
-	public void setSpeed(double speed)
+	public void setSpeed(Double speed)
 	{
 		this.speed = speed;
 	}
 
 	@Override public String toString()
 	{
-		return String.format("user: %1d; lon: %2f; lat: %3f",userId,longitude,latitude);
+		return String.format("%1d; %2d; %3d", getLongitude(), getLatitude(), getClientTime());
 	}
 }

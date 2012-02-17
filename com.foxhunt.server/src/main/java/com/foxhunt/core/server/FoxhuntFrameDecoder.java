@@ -38,11 +38,7 @@ public class FoxhuntFrameDecoder extends FrameDecoder
 		}
 
 		byte[] data = buffer.readBytes(size).toByteBuffer().array();
-		if(data[data.length-1]!=0x04)
-		{
-			throw new Exception("Packet didn't end with EOT.");
-		}
 
-		return new FoxhuntPacket(data);
+		return FoxhuntPacket.Deserialize(data);
 	}
 }

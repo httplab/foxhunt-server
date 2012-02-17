@@ -1,10 +1,7 @@
 package com.foxhunt.core.server;
 
 import com.foxhunt.core.entity.Fix;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,18 +15,20 @@ import org.slf4j.LoggerFactory;
 public class FoxhuntTopHandler extends SimpleChannelHandler
 {
     private final World world;
+	private FoxhuntConnection connection;
     final static Logger log = LoggerFactory.getLogger(FoxhuntTopHandler.class);
 
 	@Override public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
 	{
+		this.connection = new FoxhuntConnection(e.getChannel());
         log.info(Integer.toString(this.hashCode()));
 	}
 
 	@Override public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception
 	{
-	   FoxhuntPacket packet = (FoxhuntPacket) e.getMessage();
-		
-       log.info(packet.toString());
+        FoxhuntPacket packet = (FoxhuntPacket) e.getMessage();
+        log.info(packet.toString());
+		connection.ProcessPacket(packet);
 	}
     
     public FoxhuntTopHandler(World w)
@@ -37,4 +36,9 @@ public class FoxhuntTopHandler extends SimpleChannelHandler
         super();
         this.world = w;
     }
+
+	@Override public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception
+	{
+		log.error(e.getCause().getMessage());
+	}
 }

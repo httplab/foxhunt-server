@@ -1,9 +1,8 @@
 package com.foxhunt.core.server;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+
+import java.io.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -12,51 +11,33 @@ import java.io.DataOutputStream;
  * Time: 23:27
  * To change this template use File | Settings | File Templates.
  */
-public class FoxhuntPacket
+public abstract class FoxhuntPacket
 {
-	protected byte[] rawPacketData;
-
-	protected FoxhuntPacket()
+	public byte[] Serialize() throws IOException
 	{
+		ByteArrayOutputStream stream = new ByteArrayOutputStream();
+		DataOutputStream dos = new DataOutputStream(stream);
+		Serialize(dos);
+		dos.close();
+		byte[] dataBody = stream.toByteArray();
+		stream = new ByteArrayOutputStream();
+		dos = new DataOutputStream(stream);
+		dos.writeInt(getPackageType());
+		dos.writeInt(dataBody.length+8);
+		dos.write(dataBody);
+		dos.close();
+		return stream.toByteArray();
 	}
 
-	protected ByteArrayInputStream getPacketDataStream()
-	{
-		return new ByteArrayInputStream(rawPacketData);
-	}
+	protected abstract void Serialize(DataOutputStream stream) throws IOException;
 
-	protected DataInputStream getPacketDataInputStream()
-	{
-		return new DataInputStream(getPacketDataStream());
-	}
-
-	public int getPackageType() throws Exception
-	{
-		return getPacketDataInputStream().readInt();
-	}
-	
-	public int getStoredPackageSize() throws Exception
-	{
-		DataInputStream ds = getPacketDataInputStream();
-		ds.skip(4);
-		return ds.readInt();
-	}
-
-	public int getDataSize() throws Exception
-	{
-		return rawPacketData.length;
-	}
-
-	public FoxhuntPacket(byte[] rawData)
-	{
-		rawPacketData = rawData;
-	}
+	public abstract int getPackageType();
 
 	@Override public String toString()
 	{
 		try
 		{
-			return String.format("%1$d:%2$d", getPackageType(), getStoredPackageSize());
+			return String.format("%1$d", getPackageType());
 		}
 		catch (Exception ex)
 		{
@@ -64,19 +45,32 @@ public class FoxhuntPacket
 		}
 	}
 
-	public byte[] getRawPacketData()
+	public static FoxhuntPacket Deserialize(byte[] data)  throws Exception
 	{
-		return rawPacketData;
-	}
+		ByteInputStream bis = new ByteInputStream(data, data.length);
+		DataInputStream dis = new DataInputStream(bis);
+		int packageType = dis.readInt();
+		int packageLength = dis.readInt();
+		FoxhuntPacket res = null;
+		switch (packageType)
+		{
+			case 0:
+				res = new ConnectionRequestPacketU(dis);
+				break;
+			case 1:
+				res = new AuthResultPacketD(dis);
+				break;
+			case 3:
+				res = new FixRequestPacketD();
+				break;
+			case 5:
+				res = new EnvironmentUpdateRequestPacketU();
+				break;
+			default:
+				res = null;
+		}
 
-	protected static  byte[] getPacketData(int packetType, byte[] data) throws Exception
-	{
-		ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		DataOutputStream os = new DataOutputStream(stream);
-		os.writeInt(packetType);
-		os.writeInt(8+data.length);
-		os.write(data);
-		os.close();
-		return stream.toByteArray();
+		dis.close();
+		return res;
 	}
 }

@@ -3,7 +3,7 @@
 DESC="Foxhunt Server"
 FOXHUNT_HOME=/u/srv/foxhunt-server
 FOXHUNT_JAR=foxhunt-server.jar
-FOXHUNT_BUILD_JAR=com.foxhunt.core.server-1.0-SNAPSHOT.one-jar.jar
+FOXHUNT_BUILD_JAR=com.foxhunt.server-1.0-SNAPSHOT.one-jar.jar
 
 CONNECTION=dev@dev.httplab.ru
 FOXHUNT_INIT='sudo service foxhunt'

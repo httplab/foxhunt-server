@@ -1,6 +1,6 @@
 package com.foxhunt.core.server;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
+
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.*;
 import org.jboss.netty.channel.group.ChannelGroup;
@@ -56,8 +56,8 @@ public class FoxhuntServer
 		bootstrap.setOption("child.tcpNoDelay", true);
 		bootstrap.setOption("child.keepAlive", true);
 
-		Channel channel = bootstrap.bind(new InetSocketAddress(9001));
-		log.info("Server bound to port 9001");
+		Channel channel = bootstrap.bind(new InetSocketAddress(9003));
+		log.info("Server bound to port 9003");
 		allChannels.add(channel);
 
 		while (true)

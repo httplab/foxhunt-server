@@ -87,7 +87,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.foxhunt.core.server.SampleDiscardServer</mainClass>
+                            <mainClass>com.foxhunt.core.server.FoxhuntServer</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

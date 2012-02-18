@@ -2,7 +2,6 @@ package com.foxhunt.core.server;
 
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.security.PublicKey;
 
 /**
  * Created by IntelliJ IDEA.
@@ -15,7 +14,7 @@ public class FixRequestPacketD extends FoxhuntPacket
 {
 	@Override public int getPackageType()
 	{
-		return 3;  //To change body of implemented methods use File | Settings | File Templates.
+		return FIX_REQUEST_D;  //To change body of implemented methods use File | Settings | File Templates.
 	}
 
 	@Override public String toString()

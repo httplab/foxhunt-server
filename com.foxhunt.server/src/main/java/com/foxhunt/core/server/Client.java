@@ -18,8 +18,8 @@ public class Client
 {
 	public static void main(String[] arguments)
 	{
-		String host = "localhost";
-		int port = 9001;
+		String host = "dev.httplab.ru";
+		int port = 9003;
 		ChannelFactory factory =
 				new NioClientSocketChannelFactory(
 						Executors.newCachedThreadPool(),

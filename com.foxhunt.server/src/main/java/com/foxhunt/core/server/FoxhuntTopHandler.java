@@ -20,7 +20,7 @@ public class FoxhuntTopHandler extends SimpleChannelHandler
 
 	@Override public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
 	{
-		this.connection = new FoxhuntConnection(e.getChannel());
+		this.connection = new FoxhuntConnection(e.getChannel(),world);
         log.info(Integer.toString(this.hashCode()));
 	}
 

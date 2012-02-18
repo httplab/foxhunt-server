@@ -14,11 +14,22 @@ public class Fix
 	private double accuracy;
 	private long clientTime;
 	private byte providerId;
+	private Integer playerId;
 
 	private Double altitude;
 	private Double bearing;
 	private Double speed;
 	private Long fixTime;
+
+	public Integer getPlayerId()
+	{
+		return playerId;
+	}
+
+	public void setPlayerId(Integer playerId)
+	{
+		this.playerId = playerId;
+	}
 
 	public double getAccuracy()
 	{

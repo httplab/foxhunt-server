@@ -1,12 +1,15 @@
 package com.foxhunt.core.server;
 
-import com.sun.javaws.exceptions.InvalidArgumentException;
+import com.foxhunt.core.entity.Fix;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -19,15 +22,36 @@ public class FoxhuntConnection
 {
 	final static Logger log = LoggerFactory.getLogger(FoxhuntServer.class);
 
+	private static HashMap<Integer, FoxhuntConnection> connectionsMap = new HashMap<Integer, FoxhuntConnection>();
+
 	private Integer playerId;
 	private ConnectionState connectionState = ConnectionState.New;
 	private Channel channel;
+	private World world;
+	private long lastFixDate;
+
+	public static boolean IsLoggedIn(int playerId)
+	{
+		return connectionsMap.containsKey(playerId);
+	}
+
+	public static FoxhuntConnection GetConnection(int playerId)
+	{
+		if(connectionsMap.containsKey(playerId))
+		{
+			return connectionsMap.get(playerId);
+		}
+		else
+		{
+			return null;
+		}
+	}
 
 	public void ProcessPacket(FoxhuntPacket packet) throws Exception
 	{
 		switch (packet.getPackageType())
 		{
-			case 0:
+			case FoxhuntPacket.AUTH_REQUEST_U:
 				if(connectionState == ConnectionState.New)
 				{
 					int res = PerformAuthentication( (ConnectionRequestPacketU) packet);
@@ -38,7 +62,13 @@ public class FoxhuntConnection
 					}
 					else
 					{
+						FoxhuntConnection existingConnection = GetConnection(res);
+						if(existingConnection!=null)
+						{
+							existingConnection.Close();
+						}
 						playerId=res;
+						connectionsMap.put(playerId,this);
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
 					}
@@ -48,6 +78,19 @@ public class FoxhuntConnection
 					log.error("Wrong state");
 					connectionState = ConnectionState.Error;
 					throw new Exception("Wrong state");
+				}
+				break;
+			case FoxhuntPacket.FIX_U:
+				if(connectionState == ConnectionState.Authenticated)
+				{
+					FixPacketU fixPacket = (FixPacketU) packet;
+					Fix fix = fixPacket.getFix();
+					if(fix.getClientTime()>lastFixDate)
+					{
+						lastFixDate=fix.getClientTime();
+						fix.setPlayerId(playerId);
+						world.EnqueueFix(fix);
+					}
 				}
 				break;
 			default:
@@ -75,10 +118,38 @@ public class FoxhuntConnection
 		Channels.write(channel,buf);
 	}
 
-	public FoxhuntConnection(Channel channel) throws Exception
+	public FoxhuntConnection(Channel channel, World world) throws Exception
 	{
 		if(channel==null)
 			throw new Exception();
+
+		if(world==null)
+			throw new Exception();
+
+
 		this.channel = channel;
+		this.world = world;
+	}
+
+	public void Close()
+	{
+		this.connectionState = ConnectionState.Closing;
+		connectionsMap.remove(playerId);
+		playerId = null;
+		ChannelFuture cf = this.channel.close();
+		cf.addListener(new ChannelFutureListener()
+		{
+			@Override public void operationComplete(ChannelFuture future) throws Exception
+			{
+				FoxhuntConnection.this.connectionState = ConnectionState.Closed;
+			}
+		});
+	}
+
+	public void Remove()
+	{
+		this.connectionState = ConnectionState.Closed;
+		connectionsMap.remove(playerId);
+		playerId = null;
 	}
 }

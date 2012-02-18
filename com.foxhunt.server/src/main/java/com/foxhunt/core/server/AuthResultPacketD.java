@@ -47,7 +47,7 @@ public class AuthResultPacketD extends FoxhuntPacket
 
 	@Override public int getPackageType()
 	{
-		return 1;
+		return AUTH_RESULT_D;
 	}
 
 	@Override public String toString()

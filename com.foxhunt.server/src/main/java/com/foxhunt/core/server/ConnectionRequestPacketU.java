@@ -1,8 +1,4 @@
 package com.foxhunt.core.server;
-
-import com.sun.org.apache.bcel.internal.generic.IF_ACMPEQ;
-import com.sun.xml.internal.stream.writers.UTF8OutputStreamWriter;
-
 import java.io.*;
 import java.security.MessageDigest;
 
@@ -89,7 +85,7 @@ public class ConnectionRequestPacketU extends FoxhuntPacket
 
 	@Override public int getPackageType()
 	{
-		return 0;
+		return AUTH_REQUEST_U;
 	}
 
 	@Override public String toString()

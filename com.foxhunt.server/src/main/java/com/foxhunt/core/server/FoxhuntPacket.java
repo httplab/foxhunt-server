@@ -1,7 +1,5 @@
 package com.foxhunt.core.server;
 
-import com.sun.xml.internal.messaging.saaj.util.ByteInputStream;
-
 import java.io.*;
 
 /**
@@ -13,6 +11,14 @@ import java.io.*;
  */
 public abstract class FoxhuntPacket
 {
+	public static final int AUTH_REQUEST_U = 0x00000000;
+	public static final int AUTH_RESULT_D = 0x00000001;
+	public static final int FIX_U = 0x00000002;
+	public static final int FIX_REQUEST_D = 0x00000003;
+	public static final int ENVIRONMENT_UPDATE_D = 0x00000004;
+	public static final int ENVIRONMENT_UPDATE_REQUEST_U = 0x00000005;
+	public static final int USER_INPUT_U = 0x00000006;
+	
 	public byte[] Serialize() throws IOException
 	{
 		ByteArrayOutputStream stream = new ByteArrayOutputStream();
@@ -47,23 +53,26 @@ public abstract class FoxhuntPacket
 
 	public static FoxhuntPacket Deserialize(byte[] data)  throws Exception
 	{
-		ByteInputStream bis = new ByteInputStream(data, data.length);
+		ByteArrayInputStream bis = new ByteArrayInputStream(data);
 		DataInputStream dis = new DataInputStream(bis);
 		int packageType = dis.readInt();
 		int packageLength = dis.readInt();
 		FoxhuntPacket res = null;
 		switch (packageType)
 		{
-			case 0:
+			case AUTH_REQUEST_U:
 				res = new ConnectionRequestPacketU(dis);
 				break;
-			case 1:
+			case AUTH_RESULT_D:
 				res = new AuthResultPacketD(dis);
 				break;
-			case 3:
+			case FIX_U:
+				res = new FixPacketU(dis);
+				break;
+			case FIX_REQUEST_D:
 				res = new FixRequestPacketD();
 				break;
-			case 5:
+			case ENVIRONMENT_UPDATE_REQUEST_U:
 				res = new EnvironmentUpdateRequestPacketU();
 				break;
 			default:

@@ -2,6 +2,7 @@ package com.foxhunt.core.server;
 
 import com.foxhunt.core.entity.Fix;
 
+import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 
@@ -18,7 +19,47 @@ public class FixPacketU extends FoxhuntPacket
 
 	@Override public int getPackageType()
 	{
-		return 2;  //To change body of implemented methods use File | Settings | File Templates.
+		return FIX_U;  //To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	public FixPacketU(Fix fix)
+	{
+		this.fix = fix;
+	}
+	
+	public Fix getFix()
+	{
+		return fix;
+	}
+
+	public FixPacketU(DataInputStream stream) throws Exception
+	{
+		fix = new Fix();
+		fix.setLongitude(stream.readDouble());
+		fix.setLatitude(stream.readDouble());
+		fix.setAccuracy(stream.readDouble());
+		fix.setClientTime(stream.readLong());
+
+		int c =stream.read();
+
+		while (c!=-1)
+		{
+			switch (c)
+			{
+				case 0x00:
+					fix.setAltitude(stream.readDouble());
+					break;
+				case 0x01:
+					fix.setSpeed(stream.readDouble());
+					break;
+				case 0x02:
+					fix.setBearing(stream.readDouble());
+					break;
+				case 0x03:
+					fix.setFixTime(stream.readLong());
+					break;
+			}
+		}
 	}
 
 	@Override protected void Serialize(DataOutputStream stream) throws IOException

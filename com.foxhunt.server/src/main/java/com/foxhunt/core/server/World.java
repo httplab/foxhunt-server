@@ -5,6 +5,7 @@ import com.foxhunt.core.server.FoxhuntServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
 
@@ -20,11 +21,23 @@ public class World
 	private Queue<Fix> fixQueue;
 	private boolean stop = true;
 	final static Logger log = LoggerFactory.getLogger(FoxhuntServer.class);
-
+	private HashMap<Integer, Fix> lastKnownPositions;
 
 	public void EnqueueFix(Fix fix)
 	{
 		fixQueue.add(fix);
+	}
+
+	public Fix getLastKnownPosition(int playerId)
+	{
+		if(lastKnownPositions.containsKey(playerId))
+		{
+			return lastKnownPositions.get(playerId);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 	public void FixProcessingLoop()
@@ -48,6 +61,7 @@ public class World
 	private void ProcessFix(Fix fix)
 	{
 		FoxhuntServer.log.info(fix.toString());
+		lastKnownPositions.put(fix.getPlayerId(),fix);
 	}
 
 	public void Stop()
@@ -73,5 +87,6 @@ public class World
 	public World()
 	{
 		fixQueue = new LinkedList<Fix>();
+		lastKnownPositions = new HashMap<Integer, Fix>();
 	}
 }

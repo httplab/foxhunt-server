@@ -11,5 +11,7 @@ public enum ConnectionState
 {
 	New,
 	Authenticated,
-	Error
+	Error,
+	Closing,
+	Closed
 }

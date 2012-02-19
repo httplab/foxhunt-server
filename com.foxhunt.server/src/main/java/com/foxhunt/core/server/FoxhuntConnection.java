@@ -28,6 +28,7 @@ public class FoxhuntConnection
 	private ConnectionState connectionState = ConnectionState.New;
 	private Channel channel;
 	private World world;
+	private Game game;
 	private long lastFixDate;
 
 	public static boolean IsLoggedIn(int playerId)
@@ -71,6 +72,7 @@ public class FoxhuntConnection
 						connectionsMap.put(playerId,this);
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
+						SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
 					}
 				}
 				else
@@ -118,7 +120,7 @@ public class FoxhuntConnection
 		Channels.write(channel,buf);
 	}
 
-	public FoxhuntConnection(Channel channel, World world) throws Exception
+	public FoxhuntConnection(Channel channel, World world, Game game) throws Exception
 	{
 		if(channel==null)
 			throw new Exception();

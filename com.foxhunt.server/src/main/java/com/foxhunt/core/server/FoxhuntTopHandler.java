@@ -15,12 +15,13 @@ import org.slf4j.LoggerFactory;
 public class FoxhuntTopHandler extends SimpleChannelHandler
 {
     private final World world;
+	private final Game game;
 	private FoxhuntConnection connection;
     final static Logger log = LoggerFactory.getLogger(FoxhuntTopHandler.class);
 
 	@Override public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
 	{
-		this.connection = new FoxhuntConnection(e.getChannel(),world);
+		this.connection = new FoxhuntConnection(e.getChannel(),world, game);
         log.info(Integer.toString(this.hashCode()));
 	}
 
@@ -31,10 +32,11 @@ public class FoxhuntTopHandler extends SimpleChannelHandler
 		connection.ProcessPacket(packet);
 	}
     
-    public FoxhuntTopHandler(World w)
+    public FoxhuntTopHandler(World w, Game game)
     {
         super();
         this.world = w;
+	    this.game = game;
     }
 
 	@Override public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception

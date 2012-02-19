@@ -11,7 +11,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
-import java.io.DataInputStream;
 import java.io.InputStreamReader;
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -34,10 +33,11 @@ public class FoxhuntServer
 	{
 		log.info("Server launched");
 		final World world = new World();
+		final Game game = new Game();
 		Thread worldThread = new Thread(world.getFixLoop());
-		worldThread.setName("com.foxhunt.core.server.World");
+		worldThread.setName("World");
 		worldThread.start();
-		log.info("com.foxhunt.core.server.World thread started");
+		log.info("World thread started");
 
 		ChannelFactory factory = new NioServerSocketChannelFactory(
 				Executors.newCachedThreadPool(),
@@ -49,7 +49,7 @@ public class FoxhuntServer
 		{
 			@Override public ChannelPipeline getPipeline() throws Exception
 			{
-				return Channels.pipeline(new FoxhuntFrameDecoder(),new FoxhuntTopHandler(world));
+				return Channels.pipeline(new FoxhuntFrameDecoder(),new FoxhuntTopHandler(world,game));
 			}
 		});
 

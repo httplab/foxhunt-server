@@ -30,7 +30,6 @@ public abstract class FoxhuntPacket
 		stream = new ByteArrayOutputStream();
 		dos = new DataOutputStream(stream);
 		dos.writeInt(getPackageType());
-		dos.writeInt(dataBody.length+8);
 		dos.write(dataBody);
 		dos.close();
 		return stream.toByteArray();
@@ -57,7 +56,6 @@ public abstract class FoxhuntPacket
 		ByteArrayInputStream bis = new ByteArrayInputStream(data);
 		DataInputStream dis = new DataInputStream(bis);
 		int packageType = dis.readInt();
-		int packageLength = dis.readInt();
 		FoxhuntPacket res = null;
 		switch (packageType)
 		{

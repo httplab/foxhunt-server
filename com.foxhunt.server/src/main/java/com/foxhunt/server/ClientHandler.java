@@ -3,7 +3,10 @@ package com.foxhunt.server;
 import com.foxhunt.core.packets.FoxhuntPacket;
 import com.foxhunt.server.netty.FoxhuntTopHandler;
 import com.foxhunt.server.netty.MessageReceivedHandler;
-import org.jboss.netty.channel.*;
+import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.ExceptionEvent;
+import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.SimpleChannelHandler;
 
 /**
  * Created by IntelliJ IDEA.

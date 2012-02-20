@@ -3,6 +3,9 @@ package com.foxhunt.server.netty;
 import com.foxhunt.core.packets.FoxhuntPacket;
 import com.foxhunt.server.Game;
 import com.foxhunt.server.World;
+import com.foxhunt.core.entity.Fix;
+
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -16,30 +19,22 @@ import org.slf4j.LoggerFactory;
  */
 public class FoxhuntTopHandler extends SimpleChannelHandler
 {
-    private final World world;
-	private final Game game;
 	private FoxhuntConnection connection;
     final static Logger log = LoggerFactory.getLogger(FoxhuntTopHandler.class);
 
 	@Override public void channelConnected(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception
 	{
-		this.connection = new FoxhuntConnection(e.getChannel(),world, game);
+		this.connection = new FoxhuntConnection(e.getChannel());
         log.info(Integer.toString(this.hashCode()));
 	}
 
 	@Override public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) throws Exception
 	{
-        FoxhuntPacket packet = (FoxhuntPacket) e.getMessage();
+		FoxhuntPacket packet = (FoxhuntPacket)  e.getMessage();
         log.info(packet.toString());
 		connection.ProcessPacket(packet);
 	}
-    
-    public FoxhuntTopHandler(World w, Game game)
-    {
-        super();
-        this.world = w;
-	    this.game = game;
-    }
+
 
 	@Override public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception
 	{

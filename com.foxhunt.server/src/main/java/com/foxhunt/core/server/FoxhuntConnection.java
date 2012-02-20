@@ -27,8 +27,6 @@ public class FoxhuntConnection
 	private Integer playerId;
 	private ConnectionState connectionState = ConnectionState.New;
 	private Channel channel;
-	private World world;
-	private Game game;
 	private long lastFixDate;
 
 	public static boolean IsLoggedIn(int playerId)
@@ -72,6 +70,7 @@ public class FoxhuntConnection
 						connectionsMap.put(playerId,this);
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
+						//Thread.sleep(3000);
 						SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
 					}
 				}
@@ -91,7 +90,7 @@ public class FoxhuntConnection
 					{
 						lastFixDate=fix.getClientTime();
 						fix.setPlayerId(playerId);
-						world.EnqueueFix(fix);
+						FoxhuntServer.getWorld().EnqueueFix(fix);
 					}
 				}
 				break;
@@ -114,23 +113,15 @@ public class FoxhuntConnection
 
 	public void SendPackage(FoxhuntPacket packet) throws Exception
 	{
-		byte[] data = packet.Serialize();
-		ChannelBuffer buf = ChannelBuffers.buffer(data.length);
-		buf.writeBytes(data);
-		Channels.write(channel,buf);
+		Channels.write(channel,packet);
 	}
 
-	public FoxhuntConnection(Channel channel, World world, Game game) throws Exception
+	public FoxhuntConnection(Channel channel) throws Exception
 	{
 		if(channel==null)
 			throw new Exception();
 
-		if(world==null)
-			throw new Exception();
-
-
 		this.channel = channel;
-		this.world = world;
 	}
 
 	public void Close()

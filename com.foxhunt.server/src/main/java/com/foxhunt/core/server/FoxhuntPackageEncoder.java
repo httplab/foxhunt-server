@@ -2,10 +2,7 @@ package com.foxhunt.core.server;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelHandler;
+import org.jboss.netty.channel.*;
 
 /**
  * Created by IntelliJ IDEA.
@@ -14,7 +11,7 @@ import org.jboss.netty.channel.SimpleChannelHandler;
  * Time: 17:05
  * To change this template use File | Settings | File Templates.
  */
-public class FoxhuntPackageEncoder extends SimpleChannelHandler 
+public class FoxhuntPackageEncoder extends SimpleChannelDownstreamHandler
 {
 	@Override public void writeRequested(ChannelHandlerContext ctx, MessageEvent e) throws Exception
 	{
@@ -24,4 +21,6 @@ public class FoxhuntPackageEncoder extends SimpleChannelHandler
 		buffer.writeBytes(data);
 		Channels.write(ctx, e.getFuture(), buffer);
 	}
+
+
 }

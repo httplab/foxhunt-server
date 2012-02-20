@@ -7,6 +7,8 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
+import org.jboss.netty.handler.codec.frame.LengthFieldPrepender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,12 +30,25 @@ public class FoxhuntServer
 	final static ChannelGroup allChannels = new DefaultChannelGroup("foxhunt-server");
 	static boolean shutdown = false;
 
+	private static World world;
+	private static Game game;
+
+	public static World getWorld()
+	{
+		return world;
+	}
+
+	public static Game getGame()
+	{
+		return game;
+	}
+
 	public static void main(String[] arguments)
 			throws InterruptedException
 	{
 		log.info("Server launched");
-		final World world = new World();
-		final Game game = new Game();
+        world = new World();
+		game = new Game();
 		Thread worldThread = new Thread(world.getFixLoop());
 		worldThread.setName("World");
 		worldThread.start();
@@ -49,7 +64,9 @@ public class FoxhuntServer
 		{
 			@Override public ChannelPipeline getPipeline() throws Exception
 			{
-				return Channels.pipeline(new FoxhuntFrameDecoder(),new FoxhuntTopHandler(world,game));
+				LengthFieldBasedFrameDecoder frameDecoder = new LengthFieldBasedFrameDecoder(1024,0,4,0,4);
+				LengthFieldPrepender prepender = new LengthFieldPrepender(4,false);
+				return Channels.pipeline(frameDecoder, new FoxhuntPackageDecoder(), new FoxhuntTopHandler(),prepender, new FoxhuntPackageEncoder());
 			}
 		});
 

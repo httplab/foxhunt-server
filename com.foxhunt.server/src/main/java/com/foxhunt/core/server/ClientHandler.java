@@ -2,6 +2,7 @@ package com.foxhunt.core.server;
 
 import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggerFactory;
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.*;

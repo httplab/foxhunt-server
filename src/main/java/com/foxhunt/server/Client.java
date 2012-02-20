@@ -37,11 +37,10 @@ public class Client
 				LengthFieldBasedFrameDecoder frameDecoder = new LengthFieldBasedFrameDecoder(1024,0,4,0,4);
 				LengthFieldPrepender prepender = new LengthFieldPrepender(4,false);
 
-				return Channels.pipeline(prepender,new FoxhuntPackageEncoder(), frameDecoder, new FoxhuntPackageDecoder(), new ClientHandler(
-						new MessageReceivedHandler()
-						{
-							@Override public void MessageReceived(FoxhuntPacket packet)
-							{
+				return Channels.pipeline(prepender, new FoxhuntPackageEncoder(), frameDecoder, new FoxhuntPackageDecoder(), new ClientHandler(
+						new MessageReceivedHandler() {
+							@Override
+							public void MessageReceived(FoxhuntPacket packet) {
 								Client.PacketReceieved(packet);
 							}
 						}

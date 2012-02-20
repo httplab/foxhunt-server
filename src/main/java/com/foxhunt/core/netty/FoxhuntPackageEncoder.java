@@ -3,7 +3,10 @@ package com.foxhunt.core.netty;
 import com.foxhunt.core.packets.FoxhuntPacket;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.*;
+import org.jboss.netty.channel.ChannelHandlerContext;
+import org.jboss.netty.channel.Channels;
+import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.channel.SimpleChannelDownstreamHandler;
 
 /**
  * Created by IntelliJ IDEA.

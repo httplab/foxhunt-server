@@ -4,17 +4,14 @@ import com.foxhunt.core.entity.Fix;
 import com.foxhunt.core.packets.*;
 import com.foxhunt.server.ConnectionState;
 import com.foxhunt.server.FoxhuntServer;
-import com.foxhunt.server.Game;
-import com.foxhunt.server.World;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.*;
+import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelFuture;
+import org.jboss.netty.channel.ChannelFutureListener;
+import org.jboss.netty.channel.Channels;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
 
 /**
  * Created by IntelliJ IDEA.
@@ -118,7 +115,7 @@ public class FoxhuntConnection
 
 	public void SendPackage(FoxhuntPacket packet) throws Exception
 	{
-		Channels.write(channel,packet);
+		Channels.write(channel, packet);
 	}
 
 	public FoxhuntConnection(Channel channel) throws Exception

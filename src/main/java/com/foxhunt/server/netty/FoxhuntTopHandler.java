@@ -1,11 +1,6 @@
 package com.foxhunt.server.netty;
 
 import com.foxhunt.core.packets.FoxhuntPacket;
-import com.foxhunt.server.Game;
-import com.foxhunt.server.World;
-import com.foxhunt.core.entity.Fix;
-
-import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.jboss.netty.channel.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -3,6 +3,7 @@ package com.foxhunt.server;
 import com.foxhunt.core.netty.FoxhuntPackageDecoder;
 import com.foxhunt.core.netty.FoxhuntPackageEncoder;
 import com.foxhunt.core.packets.ConnectionRequestPacketU;
+import com.foxhunt.core.packets.EnvironmentUpdateRequestPacketU;
 import com.foxhunt.core.packets.FoxhuntPacket;
 import com.foxhunt.server.netty.MessageReceivedHandler;
 import org.jboss.netty.bootstrap.ClientBootstrap;
@@ -25,7 +26,7 @@ public class Client
 {
 	public static void main(String[] arguments)
 	{
-		String host = "localhost";
+		String host = "dev.httplab.ru";
 		int port = 9003;
 		ChannelFactory factory =
 				new NioClientSocketChannelFactory(
@@ -55,7 +56,8 @@ public class Client
 
 		try
 		{
-			channel.write(new ConnectionRequestPacketU("nu-hin","1234","Malevil","+79034310138"));
+			channel.write(new ConnectionRequestPacketU("nu-hin2","1234","Malevil","+79034310138"));
+            channel.write(new EnvironmentUpdateRequestPacketU());
 		} catch (Exception e)
 		{
 			e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.

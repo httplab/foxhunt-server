@@ -1,6 +1,7 @@
 package com.foxhunt.server.netty;
 
 import com.foxhunt.core.entity.Fix;
+import com.foxhunt.core.entity.Fox;
 import com.foxhunt.core.packets.*;
 import com.foxhunt.server.ConnectionState;
 import com.foxhunt.server.FoxhuntServer;
@@ -73,10 +74,10 @@ public class FoxhuntConnection
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
 						//Thread.sleep(3000);
-						SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
+						SendPackage(new SystemMessagePacketD("sv10 Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
 					}
 				}
-				else
+                else
 				{
 					log.error("Wrong state");
 					connectionState = ConnectionState.Error;
@@ -96,6 +97,17 @@ public class FoxhuntConnection
 					}
 				}
 				break;
+            case FoxhuntPacket.ENVIRONMENT_UPDATE_REQUEST_U:
+                if(connectionState == ConnectionState.Authenticated)
+                {
+                    Fox[] ses = new Fox[2];
+                    ses[0] = Fox.HOME();
+                    ses[1] = Fox.YANDEX();
+
+                    EnvironmentUpdatePacketD p = new EnvironmentUpdatePacketD(ses);
+                    SendPackage(p);
+                }
+                break;
 			default:
 				connectionState = ConnectionState.Error;
 		}

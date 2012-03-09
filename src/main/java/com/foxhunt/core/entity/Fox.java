@@ -11,6 +11,28 @@ import java.io.*;
  */
 public class Fox
 {
+    public static Fox HOME()
+    {
+        Fox res = new Fox();
+        res.setId(0);
+        res.setLatitude(55.721439);
+        res.setLongitude(37.601927);
+        res.setType(RED_FOX);
+        res.setName("Pionerskaya");
+        return res;
+    }
+
+    public static Fox YANDEX()
+    {
+        Fox res = new Fox();
+        res.setId(1);
+        res.setLatitude(55.734009);
+        res.setLongitude(37.588473);
+        res.setType(BLUE_FOX);
+        res.setName("Russkaya");
+        return  res;
+    }
+
 	public final static int RED_FOX = 0;
 	public final static int BLUE_FOX = 1;
 	public final static int GRAY_FOX = 2;
@@ -21,6 +43,22 @@ public class Fox
 	private String name;
 	private int type;
 
+    public Fox()
+    {
+        
+    }
+    
+    public Fox(int id, long latitude, long longitude, int type, String name)
+    {
+        this.id = id;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.type = type;
+        this.name = name;
+    }
+    
+    
+    
 	public int getId()
 	{
 		return id;

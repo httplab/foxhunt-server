@@ -5,6 +5,9 @@ import com.foxhunt.core.entity.Fox;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Date;
+import java.util.Enumeration;
 
 /**
  * Created by IntelliJ IDEA.
@@ -22,6 +25,12 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 	{
 		return ENVIRONMENT_UPDATE_D;
 	}
+
+    public EnvironmentUpdatePacketD(Fox[] foxes)
+    {
+        this.foxes = foxes;
+        serverTime = new Date().getTime();
+    }
 
 	@Override protected void Serialize(DataOutputStream stream) throws IOException
 	{

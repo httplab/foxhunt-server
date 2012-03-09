@@ -52,10 +52,17 @@ public class FoxhuntServer
 		log.info("Server launched");
         world = new World();
 		game = new Game();
+        game.setWorld(world);
 		Thread worldThread = new Thread(world.getFixLoop());
 		worldThread.setName("World");
 		worldThread.start();
 		log.info("World thread started");
+
+        Thread gameThread = new Thread(game.getGameLoop());
+        gameThread.setName("Game");
+        gameThread.start();
+        log.info("Game thread started");
+
 
 		ChannelFactory factory = new NioServerSocketChannelFactory(
 				Executors.newCachedThreadPool(),
@@ -67,7 +74,7 @@ public class FoxhuntServer
 		{
 			@Override public ChannelPipeline getPipeline() throws Exception
 			{
-				LengthFieldBasedFrameDecoder frameDecoder = new LengthFieldBasedFrameDecoder(1024,0,4,0,4);
+				LengthFieldBasedFrameDecoder frameDecoder = new LengthFieldBasedFrameDecoder(30*1024,0,4,0,4);
 				LengthFieldPrepender prepender = new LengthFieldPrepender(4,false);
 				return Channels.pipeline(frameDecoder,
 						new FoxhuntPackageDecoder(),

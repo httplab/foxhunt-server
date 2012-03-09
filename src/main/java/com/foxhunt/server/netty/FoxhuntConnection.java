@@ -2,8 +2,10 @@ package com.foxhunt.server.netty;
 
 import com.foxhunt.core.entity.Fix;
 import com.foxhunt.core.entity.Fox;
+import com.foxhunt.core.entity.Spot;
 import com.foxhunt.core.packets.*;
 import com.foxhunt.server.ConnectionState;
+import com.foxhunt.server.Events.EnvironmentUpdateRequest;
 import com.foxhunt.server.FoxhuntServer;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
@@ -74,7 +76,7 @@ public class FoxhuntConnection
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
 						//Thread.sleep(3000);
-						SendPackage(new SystemMessagePacketD("sv10 Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
+						SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
 					}
 				}
                 else
@@ -100,12 +102,9 @@ public class FoxhuntConnection
             case FoxhuntPacket.ENVIRONMENT_UPDATE_REQUEST_U:
                 if(connectionState == ConnectionState.Authenticated)
                 {
-                    Fox[] ses = new Fox[2];
-                    ses[0] = Fox.HOME();
-                    ses[1] = Fox.YANDEX();
-
-                    EnvironmentUpdatePacketD p = new EnvironmentUpdatePacketD(ses);
-                    SendPackage(p);
+                    EnvironmentUpdateRequest event = new EnvironmentUpdateRequest();
+                    event.setPlayerId(playerId);
+                    FoxhuntServer.getGame().EnqueueEvent(event);
                 }
                 break;
 			default:
@@ -113,12 +112,40 @@ public class FoxhuntConnection
 		}
 	}
 
+    public static Integer[] getConnected()
+    {
+        return connectionsMap.keySet().toArray(new Integer[connectionsMap.size()]);
+    }
+    
+    public static void Broadcast(FoxhuntPacket packet)
+    {
+        for(FoxhuntConnection conn : connectionsMap.values())
+        {
+            try
+            {
+                conn.SendPackage(packet);
+            }
+            catch (Exception e)
+            {
+
+            }
+        }
+    }
+
 	private int PerformAuthentication(ConnectionRequestPacketU packet)
 	{
 		if(packet.getLogin().equals("nu-hin"))
 		{
 			return 1;
 		}
+        else if(packet.getLogin().equals("na-hin"))
+        {
+            return 2;
+        }
+        else if(packet.getLogin().equals("benjamin"))
+        {
+            return 3;
+        }
 		else
 		{
 			return -1;

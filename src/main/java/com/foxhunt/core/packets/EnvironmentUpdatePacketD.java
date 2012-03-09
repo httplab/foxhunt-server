@@ -1,6 +1,7 @@
 package com.foxhunt.core.packets;
 
 import com.foxhunt.core.entity.Fox;
+import com.foxhunt.core.entity.Spot;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
@@ -19,6 +20,7 @@ import java.util.Enumeration;
 public class EnvironmentUpdatePacketD extends FoxhuntPacket
 {
 	private Fox[] foxes;
+    private Spot[] spots;
 	private long serverTime;
 
 	@Override public int getPackageType()
@@ -26,9 +28,10 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 		return ENVIRONMENT_UPDATE_D;
 	}
 
-    public EnvironmentUpdatePacketD(Fox[] foxes)
+    public EnvironmentUpdatePacketD(Fox[] foxes, Spot[] spots)
     {
         this.foxes = foxes;
+        this.spots = spots;
         serverTime = new Date().getTime();
     }
 
@@ -40,6 +43,12 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 		{
 			stream.write(foxes[i].Serialize());
 		}
+
+        stream.writeInt(spots.length);
+        for(int i=0; i<spots.length; i++)
+        {
+            stream.write(spots[i].Serialize());
+        }
 	}
 
 	public EnvironmentUpdatePacketD(DataInputStream stream) throws IOException
@@ -51,7 +60,23 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 		{
 			foxes[i] = Fox.Deserialize(stream);
 		}
+        count = stream.readInt();
+        spots = new Spot[count];
+        for(int i=0; i<count; i++)
+        {
+            spots[i] = Spot.Deserialize(stream);
+        }
 	}
+
+    public Fox[] getFoxes()
+    {
+        return foxes;
+    }
+
+    public Spot[] getSpots()
+    {
+        return spots;
+    }
 
 	@Override public String toString()
 	{

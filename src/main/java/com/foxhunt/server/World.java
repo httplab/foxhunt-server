@@ -4,6 +4,7 @@ import com.foxhunt.core.entity.Fix;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EventListener;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Queue;
@@ -17,26 +18,33 @@ import java.util.Queue;
  */
 public class World
 {
-	private Queue<Fix> fixQueue;
+	public interface WorldUpdateListener extends EventListener
+    {
+        void OnUpdate(int playerId);
+    }
+
+    private Queue<Fix> fixQueue;
 	private boolean stop = true;
 	final static Logger log = LoggerFactory.getLogger(World.class);
 	private HashMap<Integer, Fix> lastKnownPositions;
+    private WorldUpdateListener updateListener;
 
-	public void EnqueueFix(Fix fix)
+    public WorldUpdateListener getUpdateListener() {
+        return updateListener;
+    }
+
+    public void setUpdateListener(WorldUpdateListener updateListener) {
+        this.updateListener = updateListener;
+    }
+
+    public void EnqueueFix(Fix fix)
 	{
 		fixQueue.add(fix);
 	}
 
 	public Fix getLastKnownPosition(int playerId)
-	{
-		if(lastKnownPositions.containsKey(playerId))
-		{
-			return lastKnownPositions.get(playerId);
-		}
-		else
-		{
-			return null;
-		}
+    {
+        return lastKnownPositions.get(playerId);
 	}
 
 	public void FixProcessingLoop()
@@ -49,6 +57,17 @@ public class World
 			{
 				ProcessFix(fixQueue.poll());
 			}
+            else
+            {
+                try
+                {
+                    Thread.sleep(10);
+                }
+                catch ( InterruptedException e)
+                {
+                    break;
+                }
+            }
 
 			if(stop)
 			{
@@ -56,11 +75,17 @@ public class World
 			}
 		}
 	}
-	
+
 	private void ProcessFix(Fix fix)
 	{
 		FoxhuntServer.log.info(fix.toString());
+
 		lastKnownPositions.put(fix.getPlayerId(),fix);
+        
+        if(updateListener!=null)
+        {
+            updateListener.OnUpdate(fix.getPlayerId());
+        }
 	}
 
 	public void Stop()

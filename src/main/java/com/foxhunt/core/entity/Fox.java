@@ -48,7 +48,7 @@ public class Fox
         
     }
     
-    public Fox(int id, long latitude, long longitude, int type, String name)
+    public Fox(int id, double latitude, double longitude, int type, String name)
     {
         this.id = id;
         this.latitude = latitude;

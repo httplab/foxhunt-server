@@ -1,4 +1,6 @@
-package com.foxhunt.server.Events;
+package com.foxhunt.server.events;
+
+import com.foxhunt.core.entity.GeoSpot;
 
 /**
  * Created by IntelliJ IDEA.
@@ -10,6 +12,7 @@ package com.foxhunt.server.Events;
 public class PlayerMovedEvent extends FoxhuntEvent
 {
     int playerId;
+    private GeoSpot lastKnownLocation;
 
     public int getPlayerId() {
         return playerId;
@@ -17,5 +20,13 @@ public class PlayerMovedEvent extends FoxhuntEvent
 
     public void setPlayerId(int playerId) {
         this.playerId = playerId;
+    }
+
+    public GeoSpot getLastKnownLocation() {
+        return lastKnownLocation;
+    }
+
+    public void setLastKnownLocation(GeoSpot lastKnownLocation) {
+        this.lastKnownLocation = lastKnownLocation;
     }
 }

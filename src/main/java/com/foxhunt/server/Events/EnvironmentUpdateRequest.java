@@ -1,4 +1,4 @@
-package com.foxhunt.server.Events;
+package com.foxhunt.server.events;
 
 /**
  * Created by IntelliJ IDEA.

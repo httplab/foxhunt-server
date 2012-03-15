@@ -1,19 +1,15 @@
 package com.foxhunt.server;
 
-import com.foxhunt.core.entity.Fix;
-import com.foxhunt.core.entity.Fox;
-import com.foxhunt.core.entity.MovingFox;
-import com.foxhunt.core.entity.Spot;
+import com.foxhunt.core.entity.*;
 import com.foxhunt.core.packets.EnvironmentUpdatePacketD;
 import com.foxhunt.core.packets.FoxhuntPacket;
-import com.foxhunt.server.Events.EnvironmentUpdateRequest;
-import com.foxhunt.server.Events.FoxhuntEvent;
-import com.foxhunt.server.Events.PlayerMovedEvent;
+import com.foxhunt.core.packets.GameEventPacketD;
+import com.foxhunt.server.events.EnvironmentUpdateRequest;
+import com.foxhunt.server.events.FoxhuntEvent;
+import com.foxhunt.server.events.PlayerMovedEvent;
 import com.foxhunt.server.netty.FoxhuntConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-
 import java.util.*;
 
 /**
@@ -37,9 +33,8 @@ public class Game implements World.WorldUpdateListener
     {
         //foxes.add(Fox.HOME());
         //foxes.add(Fox.YANDEX());
-        //foxes.add(new MovingFox(0,55.721402,37.601960,Fox.RED_FOX, "Zayats",60000, 0.001));
-
-        generateFoxes(55.718798,37.57833, 55.734203,37.605023,100);
+        //foxes.add(new MovingFox(0,55.721402,37.601960,Fox.RED_FOX, "Zayats",60000, 0.001))
+        generateFoxes(55.841656,37.655582, 55.847041,37.672812,50);
     }
 
 
@@ -60,9 +55,9 @@ public class Game implements World.WorldUpdateListener
             FoxhuntEvent event = _incomingQueue.remove();
             if(event instanceof PlayerMovedEvent)
             {
-                Fix location = world.getLastKnownPosition(((PlayerMovedEvent) event).getPlayerId());
-                Log.info(String.format("Player ID %1d; moved to %2s;", location.getPlayerId(), location));
-
+                int playerId = ((PlayerMovedEvent) event).getPlayerId();
+                GeoSpot location =((PlayerMovedEvent) event).getLastKnownLocation();
+                Log.info(String.format("Player ID %1d; moved to %2s;", playerId, (GeoPoint) location));
             }
             else if(event instanceof EnvironmentUpdateRequest)
             {
@@ -70,21 +65,40 @@ public class Game implements World.WorldUpdateListener
                 playersForEnvUpdate.add(PlayerId);
             }
         }
-
-
     }
 
     private FoxhuntPacket getEnvironmentUpdatePacket(int playerId)
     {
         Fox[] foxesArr = foxes.toArray(new Fox[foxes.size()]);
-        Spot[] spotsArr = new Spot[0];
-        EnvironmentUpdatePacketD packet = new EnvironmentUpdatePacketD(foxesArr, spotsArr);
+        
+        Integer[] connected = FoxhuntConnection.getConnected();
+        Player[] playersArr = new Player[connected.length-1];
+        int j=0;
+        for(int i=0; i<connected.length; i++)
+        {
+            if(connected[i]!=playerId)
+            {
+                GeoSpot spot = world.getLastKnownPosition(connected[i]);
+                playersArr[j] = new Player(
+                        connected[i],
+                        spot.getLatitude(),
+                        spot.getLongitude(),
+                        spot.getRadius(),
+                        0,
+                        "Player" + connected[i].toString());
+                j++;
+            }
+        }
+
+        EnvironmentUpdatePacketD packet = new EnvironmentUpdatePacketD(foxesArr, playersArr);
         return packet;
     }
 
     @Override
-    public void OnUpdate(int playerId) {
+    public void OnUpdate(int playerId, GeoSpot lastKnownLocation) {
         PlayerMovedEvent event = new PlayerMovedEvent();
+        event.setSender(this);
+        event.setLastKnownLocation(lastKnownLocation);
         event.setPlayerId(playerId);
         _incomingQueue.add(event);
     }
@@ -102,9 +116,7 @@ public class Game implements World.WorldUpdateListener
             
             playersForEnvUpdate.clear();
             ProcessEvents();
-
-
-            if(currTime-lastFoxUpdateTime > 500)
+            if(currTime-lastFoxUpdateTime > 1500)
             {
                 for(Fox fox : foxes)
                 {
@@ -121,9 +133,6 @@ public class Game implements World.WorldUpdateListener
                 }
                 lastFoxUpdateTime = currTime;
             }
-            
-
-
 
             for (Integer playerId : playersForEnvUpdate)
             {
@@ -148,7 +157,6 @@ public class Game implements World.WorldUpdateListener
             {
                 break;
             }
-
         }
     }
 
@@ -165,23 +173,13 @@ public class Game implements World.WorldUpdateListener
 
     private void generateFoxes(double lat1, double lon1, double lat2, double lon2, int N)
     {
-        foxes.clear();
         Random r = new Random();
         for(int i=0; i<N; i++)
         {
             double lat = r.nextDouble()*(lat2-lat1) + lat1;
             double lon = r.nextDouble()*(lon2-lon1) + lon1;
-            if(r.nextInt(3)==2)
-            {
-                Fox fox = new MovingFox(i,lat, lon, Fox.GRAY_FOX, "Dog" + Integer.toString(i),60000,0.001 );
-                foxes.add(fox);
-            }
-            else
-            {
-                Fox fox = new Fox(i,lat, lon, Fox.RED_FOX, "Fox" + Integer.toString(i) );
-                foxes.add(fox);
-            }
-
+            Fox fox = new Fox(i,lat, lon, r.nextInt(3), "Fox" + Integer.toString(i) );
+            foxes.add(fox);
         }
     }
 

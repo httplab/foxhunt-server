@@ -1,4 +1,4 @@
-package com.foxhunt.server.Events;
+package com.foxhunt.server.events;
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,6 +8,8 @@ package com.foxhunt.server.Events;
  * To change this template use File | Settings | File Templates.
  */
 public class FoxhuntEvent {
+    private int depth;
+    private FoxhuntEvent cause;
     private Object Sender;
 
     public Object getSender() {
@@ -16,5 +18,21 @@ public class FoxhuntEvent {
 
     public void setSender(Object sender) {
         Sender = sender;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public FoxhuntEvent getCause() {
+        return cause;
+    }
+
+    public void setCause(FoxhuntEvent cause) {
+        this.cause = cause;
     }
 }

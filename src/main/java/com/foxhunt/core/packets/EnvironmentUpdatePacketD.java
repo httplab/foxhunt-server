@@ -1,14 +1,12 @@
 package com.foxhunt.core.packets;
 
 import com.foxhunt.core.entity.Fox;
-import com.foxhunt.core.entity.Spot;
+import com.foxhunt.core.entity.Player;
 
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Enumeration;
 
 /**
  * Created by IntelliJ IDEA.
@@ -20,7 +18,7 @@ import java.util.Enumeration;
 public class EnvironmentUpdatePacketD extends FoxhuntPacket
 {
 	private Fox[] foxes;
-    private Spot[] spots;
+    private Player[] players;
 	private long serverTime;
 
 	@Override public int getPackageType()
@@ -28,10 +26,10 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 		return ENVIRONMENT_UPDATE_D;
 	}
 
-    public EnvironmentUpdatePacketD(Fox[] foxes, Spot[] spots)
+    public EnvironmentUpdatePacketD(Fox[] foxes, Player[] players)
     {
         this.foxes = foxes;
-        this.spots = spots;
+        this.players = players;
         serverTime = new Date().getTime();
     }
 
@@ -44,10 +42,10 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 			stream.write(foxes[i].Serialize());
 		}
 
-        stream.writeInt(spots.length);
-        for(int i=0; i<spots.length; i++)
+        stream.writeInt(players.length);
+        for(int i=0; i< players.length; i++)
         {
-            stream.write(spots[i].Serialize());
+            stream.write(players[i].Serialize());
         }
 	}
 
@@ -61,10 +59,10 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
 			foxes[i] = Fox.Deserialize(stream);
 		}
         count = stream.readInt();
-        spots = new Spot[count];
+        players = new Player[count];
         for(int i=0; i<count; i++)
         {
-            spots[i] = Spot.Deserialize(stream);
+            players[i] = Player.Deserialize(stream);
         }
 	}
 
@@ -73,9 +71,9 @@ public class EnvironmentUpdatePacketD extends FoxhuntPacket
         return foxes;
     }
 
-    public Spot[] getSpots()
+    public Player[] getPlayers()
     {
-        return spots;
+        return players;
     }
 
 	@Override public String toString()

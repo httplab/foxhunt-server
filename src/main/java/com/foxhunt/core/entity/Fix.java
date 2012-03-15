@@ -125,4 +125,9 @@ public class Fix
 	{
 		return String.format("%1f; %2f; %3d", getLongitude(), getLatitude(), getClientTime());
 	}
+
+    public GeoSpot getGeoSpot()
+    {
+        return new GeoSpot(latitude, longitude,accuracy);
+    }
 }

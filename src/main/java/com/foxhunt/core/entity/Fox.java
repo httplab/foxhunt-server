@@ -9,7 +9,7 @@ import java.io.*;
  * Time: 23:48
  * To change this template use File | Settings | File Templates.
  */
-public class Fox
+public class Fox extends GeoPoint
 {
     public static Fox HOME()
     {
@@ -38,21 +38,18 @@ public class Fox
 	public final static int GRAY_FOX = 2;
 
 	private int id;
-	private double latitude;
-	private double longitude;
 	private String name;
 	private int type;
 
     public Fox()
     {
-        
+
     }
     
     public Fox(int id, double latitude, double longitude, int type, String name)
     {
+        super(latitude,longitude);
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.type = type;
         this.name = name;
     }
@@ -67,26 +64,6 @@ public class Fox
 	public void setId(int id)
 	{
 		this.id = id;
-	}
-
-	public double getLatitude()
-	{
-		return latitude;
-	}
-
-	public void setLatitude(double latitude)
-	{
-		this.latitude = latitude;
-	}
-
-	public double getLongitude()
-	{
-		return longitude;
-	}
-
-	public void setLongitude(double longitude)
-	{
-		this.longitude = longitude;
 	}
 
 	public String getName()

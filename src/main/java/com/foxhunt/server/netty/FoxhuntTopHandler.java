@@ -33,6 +33,11 @@ public class FoxhuntTopHandler extends SimpleChannelHandler
 
 	@Override public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) throws Exception
 	{
+        for(int i=0; i<e.getCause().getStackTrace().length; i++)
+        {
+            log.error(e.getCause().getStackTrace()[i].toString());
+        }
+        log.error(e.getCause().toString());
 		log.error(e.getCause().getMessage());
 	}
 }

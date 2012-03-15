@@ -12,31 +12,24 @@ import java.io.IOException;
  * Time: 17:26
  * To change this template use File | Settings | File Templates.
  */
-public class Spot
+public class Player extends GeoSpot
 {
     private int id;
-    private double latitude;
-    private double longitude;
     private String name;
     private int type;
-    private double radius;
 
-    public Spot()
+    public Player()
     {
 
     }
 
-    public Spot(int id, long latitude, long longitude, int type, String name, double radius)
+    public Player(int id, double latitude, double longitude,double radius, int type, String name)
     {
+        super(latitude, longitude, radius);
         this.id = id;
-        this.latitude = latitude;
-        this.longitude = longitude;
         this.type = type;
         this.name = name;
-        this.radius = radius;
     }
-
-
 
     public int getId()
     {
@@ -46,26 +39,6 @@ public class Spot
     public void setId(int id)
     {
         this.id = id;
-    }
-
-    public double getLatitude()
-    {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude)
-    {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude()
-    {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude)
-    {
-        this.longitude = longitude;
     }
 
     public String getName()
@@ -88,14 +61,6 @@ public class Spot
         this.type = type;
     }
 
-    public double getRadius() {
-        return radius;
-    }
-
-    public void setRadius(double radius) {
-        this.radius = radius;
-    }
-
     public byte[] Serialize() throws IOException
     {
         ByteArrayOutputStream str = new ByteArrayOutputStream();
@@ -110,9 +75,9 @@ public class Spot
         return str.toByteArray();
     }
 
-    public static Spot Deserialize(DataInputStream stream) throws IOException
+    public static Player Deserialize(DataInputStream stream) throws IOException
     {
-        Spot res = new Spot();
+        Player res = new Player();
 
         res.id = stream.readInt();
         res.latitude = stream.readDouble();

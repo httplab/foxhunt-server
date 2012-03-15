@@ -1,12 +1,10 @@
 package com.foxhunt.server.netty;
 
 import com.foxhunt.core.entity.Fix;
-import com.foxhunt.core.entity.Fox;
-import com.foxhunt.core.entity.Spot;
 import com.foxhunt.core.packets.*;
 import com.foxhunt.server.ConnectionState;
-import com.foxhunt.server.Events.EnvironmentUpdateRequest;
 import com.foxhunt.server.FoxhuntServer;
+import com.foxhunt.server.events.EnvironmentUpdateRequest;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelFutureListener;
@@ -25,7 +23,7 @@ import java.util.HashMap;
  */
 public class FoxhuntConnection
 {
-	final static Logger log = LoggerFactory.getLogger(FoxhuntServer.class);
+	final static Logger Log = LoggerFactory.getLogger(FoxhuntConnection.class);
 
 	private static HashMap<Integer, FoxhuntConnection> connectionsMap = new HashMap<Integer, FoxhuntConnection>();
 
@@ -76,12 +74,13 @@ public class FoxhuntConnection
 						connectionState = ConnectionState.Authenticated;
 						SendPackage(new AuthResultPacketD(true,"OK"));
 						//Thread.sleep(3000);
-						SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
+						//SendPackage(new SystemMessagePacketD("Welcome to Foxhunt, " + ( (ConnectionRequestPacketU) packet).getLogin()));
+                        SendPackage(new GameEventPacketD("Welcome to Foxhunt, " + ((ConnectionRequestPacketU) packet).getLogin() + "!"));
 					}
 				}
                 else
 				{
-					log.error("Wrong state");
+					Log.error("Wrong state");
 					connectionState = ConnectionState.Error;
 					throw new Exception("Wrong state");
 				}
@@ -104,6 +103,7 @@ public class FoxhuntConnection
                 {
                     EnvironmentUpdateRequest event = new EnvironmentUpdateRequest();
                     event.setPlayerId(playerId);
+                    event.setSender(this);
                     FoxhuntServer.getGame().EnqueueEvent(event);
                 }
                 break;
@@ -154,7 +154,14 @@ public class FoxhuntConnection
 
 	public void SendPackage(FoxhuntPacket packet) throws Exception
 	{
-		Channels.write(channel, packet);
+        if(channel.isConnected())
+        {
+		    Channels.write(channel, packet);
+        }
+        else
+        {
+            Remove();
+        }
 	}
 
 	public FoxhuntConnection(Channel channel) throws Exception
@@ -184,6 +191,8 @@ public class FoxhuntConnection
 	{
 		this.connectionState = ConnectionState.Closed;
 		connectionsMap.remove(playerId);
+        Log.info(String.format("Player %1d disconnected.", playerId));
 		playerId = null;
+
 	}
 }

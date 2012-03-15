@@ -1,6 +1,7 @@
 package com.foxhunt.server;
 
 import com.foxhunt.core.entity.Fix;
+import com.foxhunt.core.entity.GeoSpot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ public class World
 {
 	public interface WorldUpdateListener extends EventListener
     {
-        void OnUpdate(int playerId);
+        void OnUpdate(int playerId, GeoSpot lastKnownLocation);
     }
 
     private Queue<Fix> fixQueue;
@@ -42,9 +43,9 @@ public class World
 		fixQueue.add(fix);
 	}
 
-	public Fix getLastKnownPosition(int playerId)
+	public GeoSpot getLastKnownPosition(int playerId)
     {
-        return lastKnownPositions.get(playerId);
+        return lastKnownPositions.get(playerId).getGeoSpot();
 	}
 
 	public void FixProcessingLoop()
@@ -79,12 +80,11 @@ public class World
 	private void ProcessFix(Fix fix)
 	{
 		FoxhuntServer.log.info(fix.toString());
-
-		lastKnownPositions.put(fix.getPlayerId(),fix);
+        lastKnownPositions.put(fix.getPlayerId(),fix);
         
         if(updateListener!=null)
         {
-            updateListener.OnUpdate(fix.getPlayerId());
+            updateListener.OnUpdate(fix.getPlayerId(), fix.getGeoSpot());
         }
 	}
 
